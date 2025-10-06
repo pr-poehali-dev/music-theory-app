@@ -17,9 +17,9 @@ interface UserProfileProps {
 
 const UserProfile = ({ user }: UserProfileProps) => {
   const levelColor = {
-    beginner: 'bg-green-100 text-green-800',
+    beginner: 'bg-yellow-100 text-yellow-800',
     intermediate: 'bg-blue-100 text-blue-800',
-    advanced: 'bg-purple-100 text-purple-800',
+    advanced: 'bg-red-100 text-red-800',
   }[user.adaptiveLevel];
 
   const levelText = {
@@ -58,11 +58,11 @@ const UserProfile = ({ user }: UserProfileProps) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-accent/20 rounded-lg">
+          <div className="text-center p-3 bg-red-50 rounded-lg">
             <div className="text-2xl font-bold text-primary">{user.lessonsCompleted}</div>
             <div className="text-xs text-muted-foreground">Уроков пройдено</div>
           </div>
-          <div className="text-center p-3 bg-secondary/20 rounded-lg">
+          <div className="text-center p-3 bg-blue-50 rounded-lg">
             <div className="text-2xl font-bold text-secondary">{user.badges.length}</div>
             <div className="text-xs text-muted-foreground">Наград получено</div>
           </div>

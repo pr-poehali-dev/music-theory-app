@@ -12,6 +12,7 @@ import UserProfile from '@/components/UserProfile';
 import TheoryLesson from '@/components/TheoryLesson';
 import PracticeExercise from '@/components/PracticeExercise';
 import FeedbackSystem from '@/components/FeedbackSystem';
+import VirtualPiano from '@/components/VirtualPiano';
 
 const Index = () => {
   const [userProgress, setUserProgress] = useState(35);
@@ -110,7 +111,7 @@ const Index = () => {
 
   if (showLearning && isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-yellow-50 to-blue-50">
         <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -133,8 +134,12 @@ const Index = () => {
             </div>
             
             <div className="lg:col-span-2">
-              <Tabs defaultValue="theory" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
+              <Tabs defaultValue="piano" className="w-full">
+                <TabsList className="grid w-full grid-cols-4 mb-6">
+                  <TabsTrigger value="piano" className="flex items-center gap-2">
+                    <Icon name="Piano" size={16} />
+                    Клавиатура
+                  </TabsTrigger>
                   <TabsTrigger value="theory" className="flex items-center gap-2">
                     <Icon name="BookOpen" size={16} />
                     Теория
@@ -148,6 +153,10 @@ const Index = () => {
                     Результаты
                   </TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="piano">
+                  <VirtualPiano mode="practice" onNotePlay={(note) => console.log('Played:', note)} />
+                </TabsContent>
 
                 <TabsContent value="theory">
                   <TheoryLesson 
@@ -175,7 +184,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-yellow-50 to-blue-50">
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
