@@ -40,8 +40,42 @@ const VirtualPiano = ({ mode = 'practice', targetNote, onNotePlay }: VirtualPian
     null,
   ];
 
+  const playSound = (sound: string) => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    const noteFrequencies: { [key: string]: number } = {
+      'C': 261.63,
+      'C#': 277.18,
+      'D': 293.66,
+      'D#': 311.13,
+      'E': 329.63,
+      'F': 349.23,
+      'F#': 369.99,
+      'G': 392.00,
+      'G#': 415.30,
+      'A': 440.00,
+      'A#': 466.16,
+      'B': 493.88,
+    };
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.value = noteFrequencies[sound] || 440;
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  };
+
   const handleNoteClick = (note: Note) => {
     setPlayedNote(note.name);
+    playSound(note.sound);
     
     if (mode === 'quiz' && targetNote) {
       const isCorrect = note.name === targetNote;
