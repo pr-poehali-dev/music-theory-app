@@ -16,9 +16,19 @@ interface VirtualPianoProps {
   onNotePlay?: (note: string) => void;
 }
 
+interface RecordedNote {
+  sound: string;
+  name: string;
+  timestamp: number;
+}
+
 const VirtualPiano = ({ mode = 'practice', targetNote, onNotePlay }: VirtualPianoProps) => {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
   const [score, setScore] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedMelody, setRecordedMelody] = useState<RecordedNote[]>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [recordingStartTime, setRecordingStartTime] = useState<number>(0);
 
   const whiteNotes: Note[] = [
     { name: 'До', isBlack: false, sound: 'C' },
@@ -77,6 +87,11 @@ const VirtualPiano = ({ mode = 'practice', targetNote, onNotePlay }: VirtualPian
     setPlayedNote(note.name);
     playSound(note.sound);
     
+    if (isRecording) {
+      const timestamp = Date.now() - recordingStartTime;
+      setRecordedMelody(prev => [...prev, { sound: note.sound, name: note.name, timestamp }]);
+    }
+    
     if (mode === 'quiz' && targetNote) {
       const isCorrect = note.name === targetNote;
       if (isCorrect) {
@@ -88,6 +103,41 @@ const VirtualPiano = ({ mode = 'practice', targetNote, onNotePlay }: VirtualPian
     }
 
     setTimeout(() => setPlayedNote(null), 300);
+  };
+
+  const startRecording = () => {
+    setIsRecording(true);
+    setRecordedMelody([]);
+    setRecordingStartTime(Date.now());
+  };
+
+  const stopRecording = () => {
+    setIsRecording(false);
+  };
+
+  const playMelody = async () => {
+    if (recordedMelody.length === 0 || isPlaying) return;
+    
+    setIsPlaying(true);
+    
+    for (let i = 0; i < recordedMelody.length; i++) {
+      const note = recordedMelody[i];
+      const nextNote = recordedMelody[i + 1];
+      
+      setPlayedNote(note.name);
+      playSound(note.sound);
+      
+      const delay = nextNote ? nextNote.timestamp - note.timestamp : 300;
+      await new Promise(resolve => setTimeout(resolve, Math.max(delay, 100)));
+      setPlayedNote(null);
+    }
+    
+    setIsPlaying(false);
+  };
+
+  const clearMelody = () => {
+    setRecordedMelody([]);
+    setIsRecording(false);
   };
 
   return (
@@ -177,13 +227,65 @@ const VirtualPiano = ({ mode = 'practice', targetNote, onNotePlay }: VirtualPian
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-4">
+          <div className="mt-6 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg">
               <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
               <span className="text-white text-sm">
                 {playedNote ? `Играет: ${playedNote}` : 'Нажми на клавишу'}
               </span>
             </div>
+
+            {mode === 'practice' && (
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {!isRecording ? (
+                  <Button
+                    onClick={startRecording}
+                    variant="default"
+                    className="bg-red-600 hover:bg-red-700 text-white gap-2"
+                  >
+                    <Icon name="Circle" size={16} className="fill-current" />
+                    Записать мелодию
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={stopRecording}
+                    variant="default"
+                    className="bg-red-600 hover:bg-red-700 text-white gap-2 animate-pulse"
+                  >
+                    <Icon name="Square" size={16} className="fill-current" />
+                    Остановить запись
+                  </Button>
+                )}
+
+                {recordedMelody.length > 0 && (
+                  <>
+                    <Button
+                      onClick={playMelody}
+                      disabled={isPlaying}
+                      variant="default"
+                      className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+                    >
+                      <Icon name={isPlaying ? "Loader2" : "Play"} size={16} className={isPlaying ? "animate-spin" : ""} />
+                      {isPlaying ? 'Воспроизведение...' : 'Воспроизвести'}
+                    </Button>
+
+                    <Button
+                      onClick={clearMelody}
+                      disabled={isPlaying || isRecording}
+                      variant="outline"
+                      className="bg-white/10 text-white hover:bg-white/20 border-white/30 gap-2"
+                    >
+                      <Icon name="Trash2" size={16} />
+                      Очистить
+                    </Button>
+
+                    <Badge className="bg-yellow-500 text-black px-3 py-1">
+                      {recordedMelody.length} {recordedMelody.length === 1 ? 'нота' : 'ноты'}
+                    </Badge>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
