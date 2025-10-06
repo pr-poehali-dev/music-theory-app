@@ -13,17 +13,17 @@ const Index = () => {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
 
   const levels = [
-    { id: 1, title: 'Основы нотной грамоты', difficulty: 'Легко', stars: 3, icon: 'Music', locked: false, description: 'Изучи ноты, длительности и паузы' },
-    { id: 2, title: 'Ритм и размер', difficulty: 'Легко', stars: 2, icon: 'Drum', locked: false, description: 'Освой чтение ритмических рисунков' },
-    { id: 3, title: 'Мелодия и гармония', difficulty: 'Средне', stars: 1, icon: 'Piano', locked: false, description: 'Понимание интервалов и аккордов' },
-    { id: 4, title: 'Музыкальный слух', difficulty: 'Средне', stars: 0, icon: 'Ear', locked: true, description: 'Тренировка абсолютного слуха' },
-    { id: 5, title: 'Сложные композиции', difficulty: 'Сложно', stars: 0, icon: 'Award', locked: true, description: 'Чтение партитур и сложных произведений' },
+    { id: 1, title: 'Знакомство с клавишами', difficulty: 'Легко', stars: 3, icon: 'Piano', locked: false, description: 'Расположение нот на клавиатуре' },
+    { id: 2, title: 'Правая рука: До-Ре-Ми', difficulty: 'Легко', stars: 2, icon: 'Hand', locked: false, description: 'Первые ноты и аппликатура' },
+    { id: 3, title: 'Левая рука: басовый ключ', difficulty: 'Средне', stars: 1, icon: 'Music2', locked: false, description: 'Изучение нот в басовом ключе' },
+    { id: 4, title: 'Две руки вместе', difficulty: 'Средне', stars: 0, icon: 'HandHeart', locked: true, description: 'Координация обеих рук' },
+    { id: 5, title: 'Простые мелодии', difficulty: 'Сложно', stars: 0, icon: 'Award', locked: true, description: 'Игра известных детских песен' },
   ];
 
   const reviews = [
-    { name: 'Анна М.', age: 8, text: 'Это так весело! Я уже могу читать ноты и играть простые песни на пианино!', stars: 5, avatar: '🎹' },
-    { name: 'Максим К.', age: 10, text: 'Раньше мне было скучно учиться музыке, а теперь я прохожу уровни как в игре!', stars: 5, avatar: '🎸' },
-    { name: 'София Л.', age: 9, text: 'Мне нравятся награды и звёздочки! Уже получила 3 золотых значка!', stars: 5, avatar: '🎵' },
+    { name: 'Анна М.', age: 8, text: 'Теперь я знаю все белые клавиши и могу играть "В лесу родилась ёлочка"!', stars: 5, avatar: '🎹' },
+    { name: 'Максим К.', age: 10, text: 'Виртуальная клавиатура помогла мне выучить ноты быстрее, чем у учителя!', stars: 5, avatar: '🎹' },
+    { name: 'София Л.', age: 9, text: 'Я уже играю двумя руками! Мама говорит, что я настоящая пианистка!', stars: 5, avatar: '🎹' },
   ];
 
   const handleQuizStart = (levelId: number) => {
@@ -35,9 +35,9 @@ const Index = () => {
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-4xl">🎵</div>
+            <div className="text-4xl">🎹</div>
             <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              НотаМастер
+              ПианоНоты
             </h1>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -55,7 +55,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle className="text-2xl">Регистрация</DialogTitle>
                 <DialogDescription>
-                  Создай аккаунт и начни своё музыкальное путешествие!
+                  Создай аккаунт и начни учиться играть на фортепиано!
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
@@ -92,12 +92,12 @@ const Index = () => {
                 🏆 Более 10,000 учеников уже с нами!
               </Badge>
               <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-                Учи ноты <span className="text-primary">играя!</span>
+                Учись играть на <span className="text-primary">фортепиано!</span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Превращаем скучную теорию в увлекательное приключение! 
-                Интерактивные викторины, игровые тренажёры и виртуальные лаборатории 
-                для изучения нотной грамоты.
+                Превращаем обучение нотной грамоте для фортепиано в увлекательную игру! 
+                Интерактивные викторины с виртуальной клавиатурой, упражнения для пальцев 
+                и изучение нот на клавишах.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Dialog>
@@ -154,7 +154,7 @@ const Index = () => {
             <div className="relative">
               <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl p-8 backdrop-blur-sm">
                 <div className="grid grid-cols-3 gap-4">
-                  {['🎼', '🎹', '🎸', '🎺', '🎻', '🥁', '🎤', '🎵', '🎶'].map((emoji, i) => (
+                  {['🎹', '🎼', '🎵', '⬜', '⬛', '🎶', '👆', '✋', '🏆'].map((emoji, i) => (
                     <div 
                       key={i} 
                       className="aspect-square bg-white rounded-2xl flex items-center justify-center text-4xl hover-scale cursor-pointer shadow-md animate-float"
@@ -334,9 +334,9 @@ const Index = () => {
 
       <section className="py-16 bg-gradient-to-br from-primary to-secondary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Готов начать своё музыкальное путешествие?</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Готов научиться играть на пианино?</h2>
           <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-            Присоединяйся к тысячам учеников, которые уже освоили нотную грамоту играючи!
+            Присоединяйся к тысячам учеников, которые уже играют свои первые мелодии на фортепиано!
           </p>
           <Dialog>
             <DialogTrigger asChild>
@@ -349,7 +349,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle className="text-2xl">Регистрация</DialogTitle>
                 <DialogDescription>
-                  Создай аккаунт и начни своё музыкальное путешествие!
+                  Создай аккаунт и начни учиться играть на фортепиано!
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
@@ -383,10 +383,10 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="text-3xl">🎵</div>
-                <h3 className="text-xl font-bold">НотаМастер</h3>
+                <div className="text-3xl">🎹</div>
+                <h3 className="text-xl font-bold">ПианоНоты</h3>
               </div>
-              <p className="text-gray-400">Музыкальное образование через игру</p>
+              <p className="text-gray-400">Обучение игре на фортепиано через игру</p>
             </div>
             <div>
               <h4 className="font-bold mb-4">Навигация</h4>
