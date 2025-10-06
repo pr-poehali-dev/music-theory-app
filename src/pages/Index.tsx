@@ -7,10 +7,88 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import UserProfile from '@/components/UserProfile';
+import TheoryLesson from '@/components/TheoryLesson';
+import PracticeExercise from '@/components/PracticeExercise';
+import FeedbackSystem from '@/components/FeedbackSystem';
 
 const Index = () => {
   const [userProgress, setUserProgress] = useState(35);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLearning, setShowLearning] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [stats, setStats] = useState({
+    correctAnswers: 0,
+    totalQuestions: 0,
+    currentStreak: 0,
+    timeSpent: 15,
+    adaptiveLevel: 'beginner' as 'beginner' | 'intermediate' | 'advanced'
+  });
+  
+  const [userData, setUserData] = useState({
+    name: 'Алекс',
+    level: 3,
+    experience: 450,
+    maxExperience: 1000,
+    badges: ['🏆', '⭐', '🎹'],
+    lessonsCompleted: 12,
+    adaptiveLevel: 'beginner' as 'beginner' | 'intermediate' | 'advanced'
+  });
+
+  const theoryLesson = {
+    id: 1,
+    title: 'Основы нотной грамоты',
+    content: [
+      'Ноты — это символы, которые обозначают звуки в музыке. На фортепиано существует 7 основных нот: До, Ре, Ми, Фа, Соль, Ля, Си.',
+      'Каждая нота соответствует определённой клавише на клавиатуре. Белые клавиши — это основные ноты, а чёрные — полутоны.',
+      'Чтобы начать играть, важно запомнить расположение ноты "До" — это белая клавиша слева от группы из двух чёрных клавиш.'
+    ],
+    progress: 65
+  };
+
+  const practiceQuestions = [
+    {
+      id: 1,
+      question: 'Какая нота находится слева от группы из двух чёрных клавиш?',
+      options: ['До', 'Ре', 'Ми', 'Фа'],
+      correctAnswer: 0,
+      difficulty: 'easy' as const
+    },
+    {
+      id: 2,
+      question: 'Сколько основных нот существует в музыке?',
+      options: ['5', '6', '7', '8'],
+      correctAnswer: 2,
+      difficulty: 'easy' as const
+    },
+    {
+      id: 3,
+      question: 'Какой цвет клавиш обозначает полутоны?',
+      options: ['Белый', 'Чёрный', 'Серый', 'Красный'],
+      correctAnswer: 1,
+      difficulty: 'medium' as const
+    }
+  ];
+
+  const handleAnswer = (isCorrect: boolean) => {
+    setStats(prev => ({
+      ...prev,
+      correctAnswers: prev.correctAnswers + (isCorrect ? 1 : 0),
+      totalQuestions: prev.totalQuestions + 1,
+      currentStreak: isCorrect ? prev.currentStreak + 1 : 0
+    }));
+    
+    if (currentQuestion < practiceQuestions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    }
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setShowLearning(true);
+  };
 
   const levels = [
     { id: 1, title: 'Знакомство с клавишами', difficulty: 'Легко', stars: 3, icon: 'Piano', locked: false, description: 'Расположение нот на клавиатуре' },
@@ -30,6 +108,72 @@ const Index = () => {
     setSelectedLevel(levelId);
   };
 
+  if (showLearning && isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="text-4xl">🎹</div>
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                ПианоНоты
+              </h1>
+            </div>
+            <Button onClick={() => setShowLearning(false)} variant="outline">
+              <Icon name="Home" className="mr-2" size={16} />
+              Главная
+            </Button>
+          </div>
+        </header>
+
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <UserProfile user={userData} />
+            </div>
+            
+            <div className="lg:col-span-2">
+              <Tabs defaultValue="theory" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-6">
+                  <TabsTrigger value="theory" className="flex items-center gap-2">
+                    <Icon name="BookOpen" size={16} />
+                    Теория
+                  </TabsTrigger>
+                  <TabsTrigger value="practice" className="flex items-center gap-2">
+                    <Icon name="Gamepad2" size={16} />
+                    Практика
+                  </TabsTrigger>
+                  <TabsTrigger value="feedback" className="flex items-center gap-2">
+                    <Icon name="BarChart3" size={16} />
+                    Результаты
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="theory">
+                  <TheoryLesson 
+                    lesson={theoryLesson} 
+                    onComplete={() => {}} 
+                  />
+                </TabsContent>
+
+                <TabsContent value="practice">
+                  <PracticeExercise 
+                    exercise={practiceQuestions[currentQuestion]} 
+                    onAnswer={handleAnswer}
+                  />
+                </TabsContent>
+
+                <TabsContent value="feedback">
+                  <FeedbackSystem stats={stats} />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -45,42 +189,49 @@ const Index = () => {
             <a href="#levels" className="text-foreground/80 hover:text-primary transition-colors font-medium">Уровни</a>
             <a href="#reviews" className="text-foreground/80 hover:text-primary transition-colors font-medium">Отзывы</a>
           </nav>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg">
-                Начать обучение
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Регистрация</DialogTitle>
-                <DialogDescription>
-                  Создай аккаунт и начни учиться играть на фортепиано!
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Имя</Label>
-                  <Input id="name" placeholder="Как тебя зовут?" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="age">Возраст</Label>
-                  <Input id="age" type="number" placeholder="Сколько тебе лет?" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email родителя</Label>
-                  <Input id="email" type="email" placeholder="parent@example.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Пароль</Label>
-                  <Input id="password" type="password" placeholder="Придумай надёжный пароль" />
-                </div>
-                <Button className="w-full bg-secondary hover:bg-secondary/90 text-white text-lg py-6">
-                  🎉 Создать аккаунт
+          {!isLoggedIn ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg">
+                  Начать обучение
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl">Регистрация</DialogTitle>
+                  <DialogDescription>
+                    Создай аккаунт и начни учиться играть на фортепиано!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Имя</Label>
+                    <Input id="name" placeholder="Как тебя зовут?" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="age">Возраст</Label>
+                    <Input id="age" type="number" placeholder="Сколько тебе лет?" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email родителя</Label>
+                    <Input id="email" type="email" placeholder="parent@example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Пароль</Label>
+                    <Input id="password" type="password" placeholder="Придумай надёжный пароль" />
+                  </div>
+                  <Button onClick={handleLogin} className="w-full bg-secondary hover:bg-secondary/90 text-white text-lg py-6">
+                    🎉 Создать аккаунт
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <Button onClick={() => setShowLearning(true)} size="lg" className="bg-primary hover:bg-primary/90 shadow-lg">
+              <Icon name="BookOpen" className="mr-2" size={16} />
+              Продолжить обучение
+            </Button>
+          )}
         </div>
       </header>
 
